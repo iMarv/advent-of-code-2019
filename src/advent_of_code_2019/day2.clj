@@ -24,6 +24,8 @@
       2 (code-at (+ pos 4) (code-2 c1 c2 set-pos vec))
       99 vec)))
 
+(assert (= (code-at 0 [99]) [99]))
+
 (defn compute [opcodes]
   (code-at 0 opcodes))
 
@@ -32,8 +34,33 @@
 (assert (= (compute [2 4 4 5 99 0])         [2 4 4 5 99 9801]))
 (assert (= (compute [1 1 1 4 99 5 6 0 99])  [30 1 1 4 2 5 6 0 99]))
 
-(defn day2-prep [vec]
-  (assoc (assoc vec 1 12) 2 2))
+(defn insert-noun-verb [opcodes noun verb]
+  (assoc (assoc opcodes 1 noun) 2 verb))
+
+(assert (= (insert-noun-verb [0 0 0] 1 2) [0 1 2]))
+
+(defn get-val-for [opcodes noun verb]
+  (get (compute (insert-noun-verb opcodes noun verb)) 0))
+
+(assert (= (get-val-for vals 12 2) 5305097))
+
+(defn find-noun-verb [opcodes target]
+  (nth
+   (for
+    [noun (range 99)
+     verb (range 99)
+     :when (= target (get-val-for opcodes noun verb))]
+     [noun verb])
+   0))
+
+(assert (= [12 2] (find-noun-verb vals 5305097)))
 
 (defn day2 []
-  (get (compute (day2-prep vals)) 0))
+  (get (compute (insert-noun-verb vals 1 2)) 0))
+
+(defn day2-2 []
+  (let
+   [noun-verb (find-noun-verb vals 19690720)
+    noun (get noun-verb 0)
+    verb (get noun-verb 1)]
+    (+ verb (* 100 noun))))

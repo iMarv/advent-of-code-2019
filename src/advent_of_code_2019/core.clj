@@ -6,4 +6,4 @@
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
-  (println (day2)))
+  (println (day2-2)))
